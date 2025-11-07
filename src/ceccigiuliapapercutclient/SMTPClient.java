@@ -23,15 +23,17 @@ public class SMTPClient {
     private BufferedReader reader;
     private BufferedWriter writer;
     private Socket socket;
+    private javax.swing.JTextArea atxLog;
 
-    public SMTPClient(String server) throws FileNotFoundException, IOException {
+    public SMTPClient(String server, javax.swing.JTextArea atxLog) throws FileNotFoundException, IOException {
         
         this.socket = new Socket(server, 25);
         this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        this.atxLog = atxLog;
 
         String risposta = reader.readLine();
-        System.out.println("SERVER: " + risposta);
+        atxLog.append("SERVER: " + risposta + "\n");
     }
 
     private String readServerResponse() throws IOException {
@@ -55,9 +57,9 @@ public class SMTPClient {
         writer.write(command + "\r\n");
         writer.flush();
 
-        System.out.println("CLIENT: " + command);
+        atxLog.append("CLIENT: " + command+ "\n");
         String risposta = readServerResponse();
-        System.out.println("SERVER: " + risposta);
+        atxLog.append("SERVER: " + risposta+ "\n");
 
         SMTPResponseParser parser = new SMTPResponseParser();
         SMTPResponse response = parser.parse(risposta);
@@ -87,7 +89,7 @@ public class SMTPClient {
             writer.flush();
 
             String risposta = reader.readLine();
-            System.out.println("SERVER: " + risposta);
+            atxLog.append("SERVER: " + risposta + "\n");
             
             SMTPResponseParser parser = new SMTPResponseParser();
             r = parser.parse(risposta);
